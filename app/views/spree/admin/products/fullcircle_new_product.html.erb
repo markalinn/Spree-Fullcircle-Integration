@@ -1,0 +1,59 @@
+<%= render :partial => 'spree/admin/shared/product_sub_menu' %>
+
+<%= render :partial => 'spree/shared/error_messages', :locals => { :target => @product } %>
+
+<%= form_for [:admin, @product], :html => { :multipart => true } do |f| %>
+<fieldset data-hook="new_product">
+
+  <%= f.hidden_field :name, :value => 'N/A' %>
+
+  <div class="clearfix" data-hook="new_product_attrs">
+    <div class="left">
+
+      <% unless @product.has_variants? %>
+      <% 
+      	@fullcircle_products = Spree::FullcircleProduct.all(:order => 'product_code', :group => 'product_code')
+      	@existing_products = Spree::FullcircleProduct.all(:joins => :product, :conditions => 'spree_products.deleted_at is NULL')
+      	@new_products = @fullcircle_products - @existing_products
+      %>
+      <%= f.field_container :sku do %>
+        <%= f.label :sku, t("sku") %><br />
+        <%= f.collection_select :sku, @new_products, :upc_code, :upc_code, :include_blank => '-Unassigned-' %>
+        <%= f.error_message_on :sku %>
+      <% end %>
+      <% end %>
+
+      <p>
+        <%= f.label :prototype_id, t(:prototype) %><br />
+        <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, :include_blank => true %>
+      </p>
+
+    </div>
+    <div class="right">
+      <p>
+        <%= f.label :available_on, t(:available_on) %><br />
+        <%= f.error_message_on :available_on %>
+        <%= f.text_field :available_on, :class => 'datepicker', :style => "width:150px", :value => Date.today %>
+      </p>
+      <%= f.hidden_field :price, :value => 0 %>
+    </div>
+  </div>
+
+  <%= render :partial => 'spree/admin/shared/new_resource_links' %>
+
+</fieldset>
+<% end %>
+
+<script type="text/javascript">    
+jQuery("#product_sku").change(function() {
+	product_sku = $(this).val();
+
+	$.ajax({
+		url: "/fullcircle_products/" + product_sku + ".json",
+		success: function(data) {
+				$("#product_name").val(data['fullcircle_product'].description);
+				$("#product_price").val(data['fullcircle_product'].price);
+		  }
+  	});
+ }); 
+</script>

@@ -1,0 +1,62 @@
+  <div class="right" data-hook="admin_product_form_right">
+  	
+      <%= f.field_container :price do %>
+        <%= f.label :price, t(:master_price) %> <span class="required">*</span><br />
+        <%= @product.price %>
+        <%= f.error_message_on :price %>
+      <% end %>
+
+    <p>
+      <%= f.label :available_on, t(:available_on) %><br />
+      <%= f.error_message_on :available_on %>
+      <%= f.text_field :available_on, :class => 'datepicker' %>
+    </p>
+
+    <p>
+      <%= f.label :product_code, t(:product_code) %><br />
+      <%= @product.product_code %>
+    </p>
+
+    <p>
+      <%= f.label :sku, t(:sku) %><br />
+      <%= @product.sku %>
+    </p>
+    
+    <% unless @product.has_variants? %>
+      <% if Spree::Config[:track_inventory_levels] %>
+        <p>
+          <%= f.label :on_hand, t(:on_hand) %><br />
+	      <%= @product.on_hand %>
+        </p>
+      <% end %>
+      <ul id="shipping-specs">
+        <li>
+          <%= f.label :weight, t(:weight) %>
+	      <%= @product.weight %>
+        </li>
+        <li>
+          <%= f.label :height, t(:height) %>
+          <%= f.text_field :height, :size => 4 %>
+        </li>
+        <li>
+          <%= f.label :width, t(:width) %>
+          <%= f.text_field :width, :size => 4 %>
+        </li>
+        <li>
+          <%= f.label :depth, t(:depth) %>
+          <%= f.text_field :depth, :size => 4 %>
+        </li>
+      </ul>
+    <% end %>
+    <p>
+      <%= f.label :shipping_category_id, t(:shipping_categories) %><br />
+      <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, {:include_blank => true}, {'style' => 'width:200px'}) %>
+      <%= f.error_message_on :shipping_category %>
+    </p>
+
+    <p>
+      <%= f.label :tax_category_id, t(:tax_category) %><br />
+      <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, {:include_blank => true}, {'style' => 'width:200px'}) %>
+      <%= f.error_message_on :tax_category %>
+    </p>
+  </div>
