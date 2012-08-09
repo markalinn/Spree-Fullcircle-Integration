@@ -6,6 +6,8 @@
 <fieldset data-hook="new_product">
 
   <%= f.hidden_field :name, :value => 'N/A' %>
+  <%= f.hidden_field :price, :value => 0 %>
+  <%= f.hidden_field :upc_code, :value => '0' %>
 
   <div class="clearfix" data-hook="new_product_attrs">
     <div class="left">
@@ -18,7 +20,7 @@
       %>
       <%= f.field_container :sku do %>
         <%= f.label :sku, t("sku") %><br />
-        <%= f.collection_select :sku, @new_products, :upc_code, :upc_code, :include_blank => '-Unassigned-' %>
+        <%= f.collection_select :sku, @new_products, :product_code, :product_code, :include_blank => '-Unassigned-' %>
         <%= f.error_message_on :sku %>
       <% end %>
       <% end %>
@@ -35,7 +37,6 @@
         <%= f.error_message_on :available_on %>
         <%= f.text_field :available_on, :class => 'datepicker', :style => "width:150px", :value => Date.today %>
       </p>
-      <%= f.hidden_field :price, :value => 0 %>
     </div>
   </div>
 
@@ -51,6 +52,7 @@ jQuery("#product_sku").change(function() {
 	$.ajax({
 		url: "/fullcircle_products/" + product_sku + ".json",
 		success: function(data) {
+				$("#upc_code").val(data['fullcircle_product'].upc_code);
 				$("#product_name").val(data['fullcircle_product'].description);
 				$("#product_price").val(data['fullcircle_product'].price);
 		  }

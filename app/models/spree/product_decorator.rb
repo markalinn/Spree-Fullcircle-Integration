@@ -7,6 +7,9 @@ module Spree
     #May consider re-enabling in the future. So kept the method available.
     #before_create :find_existing_deleted_sku
     
+    after_create :create_fullcircle_option_types
+    after_create :create_fullcircle_option_values
+    
     validates :sku, :presence => true
     
     def price
@@ -27,11 +30,58 @@ module Spree
   
   private
 
-    def import_missing_variants
-      fullcircle_variants = FullcircleProduct.find_by_product_code(self.product_code)
+    def create_fullcircle_option_types
+      size_option_type = OptionType.find_by_name('fullcircle_size')
+      if ! size_option_type
+        size_option_type = OptionType.new
+        size_option_type.name = 'fullcircle_size'
+        size_option_type.presentation = 'Size'
+        size_option_type.save
+      end
+      product_size_option = self.product_option_types.new
+      product_size_option.option_type = size_option_type
+      product_size_option.save
+
+      color_option_type = OptionType.find_by_name('fullcircle_color')
+      if ! color_option_type
+        color_option_type = OptionType.new
+        color_option_type.name = 'fullcircle_color'
+        color_option_type.presentation = 'Color'
+        color_option_type.save
+      end
+      product_color_option = self.product_option_types.new
+      product_color_option.option_type = color_option_type
+      product_color_option.save
+    end
+    
+    def create_fullcircle_option_values
+      size_option_type = OptionType.find_by_name('fullcircle_size')
+      color_option_type = OptionType.find_by_name('fullcircle_color')
+
+      fullcircle_variants = FullcircleProduct.find(:all, :conditions => {:product_code => self.sku})
       fullcircle_variants.each do |fullcircle_variant|
-        existing_variant = Variant.find_by_sku(fullcircle_variant.upc_code)
-        if ! fullcircle_variant.upc_code.strip == self.sku && existing_variant == false
+        color_option_value = color_option_type.option_values.find(:first, :conditions => {:name => fullcircle_variant.color_code})
+        if ! color_option_value
+          color_option_value = color_option_type.option_values.new
+          color_option_value.name = fullcircle_variant.color_code
+          color_option_value.presentation = fullcircle_variant.color_desc
+          color_option_value.save
+        end
+        size_option_value = size_option_type.option_values.find(:first, :conditions => {:name => fullcircle_variant.size})
+        if ! size_option_value
+          size_option_value = size_option_type.option_values.new
+          size_option_value.name = fullcircle_variant.size
+          size_option_value.presentation = fullcircle_variant.size
+          size_option_value.save
+        end
+      end
+    end
+
+    def link_fullcircle_variants
+      fullcircle_variants = FullcircleProduct.find_by_product_code(self.sku)
+      fullcircle_variants.each do |fullcircle_variant|
+        existing_variant = Variant.find_by_sku(fullcircle_variant.upc_code.strip)
+        if ! existing_variant
           variant = self.variants.new
           variant.is_master = false
           variant.sku = fullcircle_variant.upc_code

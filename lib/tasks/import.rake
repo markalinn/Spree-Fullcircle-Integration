@@ -19,9 +19,9 @@ namespace :spree_fullcircle_integration do
           if ! product
             product = Spree::FullcircleProduct.new
           end
-          product.company_num = company_num
+          product.company_num = company_num.strip
           product.upc_code = upc_code
-          product.product_code = product_code
+          product.product_code = product_code.strip
           product.description = description
           product.division_code = division_code
           product.division_desc = division_desc
@@ -49,7 +49,7 @@ namespace :spree_fullcircle_integration do
           end
           inventory.company_num = company_num
           inventory.upc_code = upc_code
-          inventory.product_code = product_code
+          inventory.product_code = product_code.strip
           inventory.color = color
           inventory.size_type = size_type
           inventory.size = size
