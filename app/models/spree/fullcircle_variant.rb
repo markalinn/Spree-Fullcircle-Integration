@@ -1,10 +1,11 @@
 module Spree
-  class FullcircleProduct < ActiveRecord::Base
-    #set_primary_key 'product_code'
+  class FullcircleVariant < ActiveRecord::Base
+    set_table_name 'spree_fullcircle_products'
+    #set_primary_key 'upc_code'
 
     has_one :fullcircle_inventory, :class_name => 'FullcircleInventory', :foreign_key => 'upc_code', :primary_key => 'upc_code'
     has_one :variant, :class_name => 'Variant', :foreign_key => 'sku', :primary_key => 'upc_code'
-    #has_one :product, :through => :variant
+    has_one :product, :through => :variant
 
     validates_presence_of :upc_code
     validates_uniqueness_of :upc_code

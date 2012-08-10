@@ -31,17 +31,6 @@ module Spree
   private
 
     def create_fullcircle_option_types
-      size_option_type = OptionType.find_by_name('fullcircle_size')
-      if ! size_option_type
-        size_option_type = OptionType.new
-        size_option_type.name = 'fullcircle_size'
-        size_option_type.presentation = 'Size'
-        size_option_type.save
-      end
-      product_size_option = self.product_option_types.new
-      product_size_option.option_type = size_option_type
-      product_size_option.save
-
       color_option_type = OptionType.find_by_name('fullcircle_color')
       if ! color_option_type
         color_option_type = OptionType.new
@@ -52,13 +41,25 @@ module Spree
       product_color_option = self.product_option_types.new
       product_color_option.option_type = color_option_type
       product_color_option.save
+
+      size_option_type = OptionType.find_by_name('fullcircle_size')
+      if ! size_option_type
+        size_option_type = OptionType.new
+        size_option_type.name = 'fullcircle_size'
+        size_option_type.presentation = 'Size'
+        size_option_type.save
+      end
+      product_size_option = self.product_option_types.new
+      product_size_option.option_type = size_option_type
+      product_size_option.save
     end
     
     def create_fullcircle_variants
       size_option_type = OptionType.find_by_name('fullcircle_size')
       color_option_type = OptionType.find_by_name('fullcircle_color')
+      image_count = 0
 
-      fullcircle_variants = FullcircleProduct.find(:all, :conditions => {:product_code => self.sku})
+      fullcircle_variants = FullcircleVariant.find(:all, :conditions => {:product_code => self.sku})
       fullcircle_variants.each do |fullcircle_variant|
         #Setup Option Values if they don't exist
         color_option_value = color_option_type.option_values.find(:first, :conditions => {:name => fullcircle_variant.color_code})
@@ -98,16 +99,31 @@ module Spree
         end
 
         #Link Product Image to Variant if it exists!
-        image_file_name = "WVV915M50_TEAS_.jpg"
-        image_file_path = File.join(Rails.root, 'public', 'system', 'images', image_file_name)
-        begin
-          image_file = File.open(image_file_path,  "r")
-          variant_image = product_variant.images.new
+        image_product_code = fullcircle_variant.product_code
+        image_color_code = fullcircle_variant.color_code
+        image_file_prefix = image_product_code + "_" + image_color_code
+        
+        image_file_path = File.join(Rails.root, 'public', 'system', 'images', image_file_prefix)
+        local_image_files = Dir.glob(image_file_path + '_*')
+        local_image_files.each do |image_file|
+          image_file = File.open(image_file,  "r")
+          if image_count < 2
+            variant_image = product_variant.product.images.new
+          else
+            variant_image = product_variant.images.new
+          end
           variant_image.attachment = image_file
           variant_image.save
-        rescue
-          #Unable to open file for some reason
+          image_count = image_count + 1
         end
+#        begin
+#          image_file = File.open(image_file_path,  "r")
+#          variant_image = product_variant.images.new
+#          variant_image.attachment = image_file
+#          variant_image.save
+#        rescue
+          #Unable to open file for some reason
+#        end
       end
     end
 
