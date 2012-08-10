@@ -1,7 +1,7 @@
 module Spree
   Variant.class_eval do
-    belongs_to :fullcircle_product, :class_name => "FullcircleProduct", :foreign_key => "sku", :primary_key => 'product_code'
-    belongs_to :fullcircle_variant, :class_name => "FullcircleVariant", :foreign_key => "sku", :primary_key => 'upc_code'
+    has_one :fullcircle_product, :class_name => "FullcircleProduct", :primary_key => "sku", :foreign_key => 'product_code'
+    has_one :fullcircle_variant, :class_name => "FullcircleVariant", :primary_key => "sku", :foreign_key => 'upc_code'
     has_one :fullcircle_inventory, :class_name => "FullcircleInventory", :foreign_key => "upc_code", :primary_key => 'sku'
     
     def count_on_hand

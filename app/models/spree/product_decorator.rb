@@ -127,15 +127,6 @@ module Spree
       end
     end
 
-    def set_master_upc
-      if ! master.upc_code
-        fc_product = FullcircleProduct.find(:first, :conditions => {:product_code => self.sku})
-        master.upc_code = fc_product.upc_code
-        master.save
-      end
-    end
-   
-  
     def find_existing_deleted_sku
       if ! self.sku.blank?
         existing_deleted_variant = Variant.find(:first, :joins => :product, :conditions => ['products.deleted_at is not NULL and variants.sku = ?', self.sku], :readonly => false)

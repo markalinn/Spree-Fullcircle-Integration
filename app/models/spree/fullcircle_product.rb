@@ -3,8 +3,8 @@ module Spree
     #set_primary_key 'product_code'
 
     has_one :fullcircle_inventory, :class_name => 'FullcircleInventory', :foreign_key => 'upc_code', :primary_key => 'upc_code'
-    has_one :variant, :class_name => 'Variant', :foreign_key => 'sku', :primary_key => 'upc_code'
-    #has_one :product, :through => :variant
+    belongs_to :variant, :class_name => 'Variant', :primary_key => 'sku', :foreign_key => 'upc_code'
+    has_one :product, :through => :variant
 
     validates_presence_of :upc_code
     validates_uniqueness_of :upc_code

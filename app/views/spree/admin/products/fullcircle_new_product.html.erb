@@ -5,7 +5,6 @@
 <%= form_for [:admin, @product], :html => { :multipart => true } do |f| %>
 <fieldset data-hook="new_product">
 
-  <%= f.hidden_field :name, :value => 'N/A' %>
   <%= f.hidden_field :price, :value => 0 %>
   <%= f.hidden_field :upc_code, :value => '0' %>
 
@@ -36,6 +35,11 @@
         <%= f.label :available_on, t(:available_on) %><br />
         <%= f.error_message_on :available_on %>
         <%= f.text_field :available_on, :class => 'datepicker', :style => "width:150px", :value => Date.today %>
+      </p>
+      <p>
+        <%= f.label :name, t(:name) %><br />
+        <%= f.error_message_on :name %>
+        <%= f.text_field :name %>
       </p>
     </div>
   </div>
