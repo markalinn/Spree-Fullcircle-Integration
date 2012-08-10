@@ -6,7 +6,6 @@
 <fieldset data-hook="new_product">
 
   <%= f.hidden_field :price, :value => 0 %>
-  <%= f.hidden_field :upc_code, :value => '0' %>
 
   <div class="clearfix" data-hook="new_product_attrs">
     <div class="left">
@@ -56,7 +55,6 @@ jQuery("#product_sku").change(function() {
 	$.ajax({
 		url: "/fullcircle_products/" + product_sku + ".json",
 		success: function(data) {
-				$("#upc_code").val(data['fullcircle_product'].upc_code);
 				$("#product_name").val(data['fullcircle_product'].description);
 				$("#product_price").val(data['fullcircle_product'].price);
 		  }
