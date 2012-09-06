@@ -98,7 +98,7 @@ module Spree
         #BillToZip (required)
         fc_billto_zip = self.bill_address.zipcode
         #BillToCountry (required)
-        fc_billto_country = self.bill_address.country.iso3
+        fc_billto_country = self.bill_address.country.iso
         #BillToPhone
         fc_billto_phone = self.bill_address.phone
         #TaxCode
