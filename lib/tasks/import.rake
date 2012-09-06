@@ -83,8 +83,9 @@ namespace :spree_fullcircle_integration do
             msg = msg + image_color_code
             puts msg
             fullcircle_variants = Spree::FullcircleVariant.find(:all, :conditions => {:product_code => image_product_code, :color_code => image_color_code})
+            variant_default_image_count = 0
             fullcircle_variants.each do |fullcircle_variant|
-              fullcircle_variant_image = fullcircle_variant.images.find(:first, :conditions => {:position => image_position})
+              fullcircle_variant_image = fullcircle_variant.images.find(:first, :conditions => {:position => image_position}, :order => 'position')
               if ! fullcircle_variant_image
                   #if position image doesn't exist then import
                   fullcircle_image = fullcircle_variant.images.new
@@ -92,13 +93,24 @@ namespace :spree_fullcircle_integration do
                   fullcircle_image.attachment = image
                   fullcircle_image.position = image_position
                   fullcircle_image.save
-                  #Move Image to processed folder
+                  #if image is the first image for this color then also create a default image
+                  if variant_default_image_count < 1 && image_position < 2
+                    #Find master product and attach this first color image
+                    puts "    Saving Default Image for product - " + image_product_code
+                    product = Spree::FullcircleProduct.find(:first, :conditions => {:product_code => image_product_code})
+                    product_image = product.images.new
+                    product_image.attachment = image
+                    product_image.position = image_position
+                    product_image.save
+                    variant_default_image_count = variant_default_image_count + 1                  
+                  end
+                  #Increment varaint counter to determine number of size variants for this color 
               end
             end
             FileUtils.mkdir(completed_file_path) unless File.directory?(completed_file_path)
             FileUtils.mv(image_file,completed_file_path)
           rescue
-            puts "Error!"
+            puts "Error importing file - " + image_file
           end
         end
     end

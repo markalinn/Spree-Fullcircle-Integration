@@ -103,33 +103,14 @@ module Spree
           fullcircle_image.viewable_id = product_variant.id
           fullcircle_image.viewable_type = 'Spree::Variant'
           fullcircle_image.save
-        end
-        
-        #image_product_code = fullcircle_variant.product_code
-        #image_color_code = fullcircle_variant.color_code
-        #image_file_prefix = image_product_code + "_" + image_color_code
-        
-        #image_file_path = File.join(Rails.root, 'public', 'system', 'images', image_file_prefix)
-        #local_image_files = Dir.glob(image_file_path + '_*')
-        #local_image_files.each do |image_file|
-        #  image_file = File.open(image_file,  "r")
-        #  if image_count < 2
-        #    variant_image = product_variant.product.images.new
-        #  else
-        #    variant_image = product_variant.images.new
-        #  end
-        #  variant_image.attachment = image_file
-        #  variant_image.save
-        #  image_count = image_count + 1
-        #end
-#        begin
-#          image_file = File.open(image_file_path,  "r")
-#          variant_image = product_variant.images.new
-#          variant_image.attachment = image_file
-#          variant_image.save
-#        rescue
-          #Unable to open file for some reason
-#        end
+        end        
+      end
+      #Link Fullcircle Product Images to Product if it Exists
+      fullcircle_product = FullcircleProduct.find(:first, :conditions => {:product_code => self.sku})
+      fullcircle_product.images.each do |fullcircle_product_image|
+          fullcircle_product_image.viewable_id = self.id
+          fullcircle_product_image.viewable_type = 'Spree::Product'
+          fullcircle_product_image.save
       end
     end
 
