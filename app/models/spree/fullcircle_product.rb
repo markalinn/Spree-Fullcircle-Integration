@@ -5,6 +5,8 @@ module Spree
     has_one :fullcircle_inventory, :class_name => 'FullcircleInventory', :foreign_key => 'upc_code', :primary_key => 'upc_code'
     belongs_to :variant, :class_name => 'Variant', :primary_key => 'sku', :foreign_key => 'upc_code'
     has_one :product, :through => :variant
+    #Images are only relevant if pre-loading images through rake task to speed up page creation
+    has_many :images, :as => :viewable, :order => :position, :dependent => :destroy
 
     validates_presence_of :upc_code
     validates_uniqueness_of :upc_code

@@ -2,7 +2,7 @@ require 'active_record'
 require 'spree'
 
 namespace :spree_fullcircle_integration do
-  desc "Import and Export"
+  desc "Import fullcircle files"
   task :import do
     Rake::Task['spree_fullcircle_integration:import:products'].invoke
     Rake::Task['spree_fullcircle_integration:import:inventory'].invoke
@@ -56,6 +56,47 @@ namespace :spree_fullcircle_integration do
           inventory.quantity = quantity
           inventory.available_date = available_date
           inventory.save
+        end
+    end
+
+    desc "Links Staged Images to Fullcircle Products"
+    task :images => :environment do
+      puts "Linking Fullcircle Images"
+        images_file_path = File.join(Rails.root, 'public', 'system', 'images', '/')
+        completed_file_path = File.join(images_file_path, 'processed', '/')
+        local_image_files = Dir.glob(images_file_path + '*.jpg')
+        local_image_files.each do |image_file|
+          image_file_name = image_file.split(images_file_path)[1].to_s.upcase
+          image_file_prefix= image_file_name.split(".jpg")[0]
+          image_product_code = image_file_prefix.split("_")[0]
+          image_color_code = image_file_prefix.split("_")[1]
+          begin
+            image_position = image_file_prefix.split("_")[2].to_i
+          rescue
+            image_position = 0
+          end
+          msg = " Processing: " + image_file_name
+          msg = msg +  " >> "
+          msg = msg + image_product_code
+          msg = msg +  "-"
+          msg = msg + image_color_code
+          puts msg
+          fullcircle_variants = Spree::FullcircleVariant.find(:all, :conditions => {:product_code => image_product_code, :color_code => image_color_code})
+          fullcircle_variants.each do |fullcircle_variant|
+            fullcircle_variant_image = fullcircle_variant.images.find(:first, :conditions => {:position => image_position})
+            if ! fullcircle_variant_image
+                #if position image doesn't exist then import
+                fullcircle_image = fullcircle_variant.images.new
+                image = File.open(image_file,  "r")
+                fullcircle_image.attachment = image
+                fullcircle_image.position = image_position
+                fullcircle_image.save
+                #Move Image to processed folder
+            end
+          end
+          FileUtils.mkdir(completed_file_path) unless File.directory?(completed_file_path)
+          FileUtils.mv(image_file,completed_file_path)
+            
         end
     end
 

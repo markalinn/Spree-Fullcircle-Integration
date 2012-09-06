@@ -98,24 +98,30 @@ module Spree
           variant_color_option_value = OptionValuesVariant.create!(:option_value_id => color_option_value.id, :variant_id => product_variant.id)
         end
 
-        #Link Product Image to Variant if it exists!
-        image_product_code = fullcircle_variant.product_code
-        image_color_code = fullcircle_variant.color_code
-        image_file_prefix = image_product_code + "_" + image_color_code
-        
-        image_file_path = File.join(Rails.root, 'public', 'system', 'images', image_file_prefix)
-        local_image_files = Dir.glob(image_file_path + '_*')
-        local_image_files.each do |image_file|
-          image_file = File.open(image_file,  "r")
-          if image_count < 2
-            variant_image = product_variant.product.images.new
-          else
-            variant_image = product_variant.images.new
-          end
-          variant_image.attachment = image_file
-          variant_image.save
-          image_count = image_count + 1
+        #Link Fullcircle Variant Image to Variant if it exists
+        fullcircle_variant.images.each do |fullcircle_image|
+          fullcircle_image.viewable_id = product_variant.id
+          fullcircle_image.viewable_type = 'Spree::Variant'
+          fullcircle_image.save
         end
+        
+        #image_product_code = fullcircle_variant.product_code
+        #image_color_code = fullcircle_variant.color_code
+        #image_file_prefix = image_product_code + "_" + image_color_code
+        
+        #image_file_path = File.join(Rails.root, 'public', 'system', 'images', image_file_prefix)
+        #local_image_files = Dir.glob(image_file_path + '_*')
+        #local_image_files.each do |image_file|
+        #  image_file = File.open(image_file,  "r")
+        #  if image_count < 2
+        #    variant_image = product_variant.product.images.new
+        #  else
+        #    variant_image = product_variant.images.new
+        #  end
+        #  variant_image.attachment = image_file
+        #  variant_image.save
+        #  image_count = image_count + 1
+        #end
 #        begin
 #          image_file = File.open(image_file_path,  "r")
 #          variant_image = product_variant.images.new
