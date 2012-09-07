@@ -81,7 +81,7 @@ module Spree
         fc_shipto_phone = self.ship_address.phone
         #ShipToEmail
         #ShipMethod (required)
-        fc_ship_method = self.shipping_method.name
+        fc_ship_method = self.shipping_method.fullcircle_code
         #SpecialInstruction
         #BillToAddressID
         #BillToName (required)

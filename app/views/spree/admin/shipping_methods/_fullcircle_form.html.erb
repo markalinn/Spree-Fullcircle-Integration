@@ -1,0 +1,5 @@
+  <%= f.field_container :fullcircle_code do %>
+    <%= f.label :fullcircle_code, t(:fullcircle_code) %><br />
+    <%= f.text_field :fullcircle_code %>
+    <%= error_message_on :shipping_method, :fullcircle_code %>
+  <% end %>
