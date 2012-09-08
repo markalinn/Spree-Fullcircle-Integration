@@ -76,7 +76,7 @@ module Spree
         #ShipToZip (required)
         fc_shipto_zip = self.ship_address.zipcode
         #ShipToCountry (required)
-        fc_shipto_country = self.ship_address.country.iso3
+        fc_shipto_country = self.ship_address.country.iso
         #ShipToPhone
         fc_shipto_phone = self.ship_address.phone
         #ShipToEmail
@@ -129,7 +129,7 @@ module Spree
         #Embellishment Price
         #Source Code
         #Tax Percent
-        fc_tax_percent = '0.08' #TODO- Update this example to proper value from DB
+        fc_tax_percent = '8.00' #(whole number - ex 8.00) TODO- Update this example to proper value from DB
         File.open('OrderExport.txt', 'a+') { |f|
           f.write("#{fc_company_number}\t\t\t\t#{fc_order_number}\t\t#{fc_order_date}\t\t\t\t\t\t\t\t\t\t\t\t#{fc_upc_code}\t\t\t\t\t\t#{fc_unit_price}\t#{fc_quantity}\t\t#{fc_shipto_name}\t#{fc_shipto_address1}\t#{fc_shipto_address2}\t\t#{fc_shipto_city}\t#{fc_shipto_state}\t#{fc_shipto_zip}\t#{fc_shipto_country}\t#{fc_shipto_phone}\t\t#{fc_ship_method}\t\t\t#{fc_billto_name}\t#{fc_billto_address1}\t#{fc_billto_address2}\t\t#{fc_billto_city}\t#{fc_billto_state}\t#{fc_billto_zip}\t#{fc_billto_country}\t#{fc_billto_phone}\t\t#{fc_freight}\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t#{fc_tax_percent}\n")
         }
