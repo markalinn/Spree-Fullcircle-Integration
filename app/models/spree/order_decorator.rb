@@ -30,7 +30,7 @@ module Spree
         # The following is the order of the tab delimited fields
         #####################
         #Company Number (required)
-        fc_company_number = '01'
+        fc_company_number = FullCircleConfig['export']['company_no'].to_s
         #FCCustomerID
         #CustomerID
         #CustomerType

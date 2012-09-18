@@ -1,0 +1,12 @@
+common: &common
+  import:
+    company_no: '01'
+  export:
+    company_no: '01'
+
+test:
+  <<: *common
+development:
+  <<: *common
+production:
+  <<: *common
